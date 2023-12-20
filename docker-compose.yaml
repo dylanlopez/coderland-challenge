@@ -1,0 +1,34 @@
+version: "3.6"
+services:
+
+  local-api:
+    depends_on:
+      - local-pg
+    build:
+      dockerfile: ./app/CoderlandChallenge/Coderland.Api/Dockerfile
+      context: .
+    volumes:
+      - ./CoderlandChallenge/CoderlandChallenge.sln:/app/CoderlandChallenge.sln
+      - ./CoderlandChallenge:/app
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=local-pg;Port=5432;Database=coderland;User Id=postgres;Password=123456;"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:5000"
+    ports:
+      - 9999:5000
+    networks:
+      - coderland-network
+
+  local-pg:
+    image: postgres:12-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_USER: postgres
+      POSTGRES_DB: coderland
+    networks:
+      - coderland-network
+
+networks:
+  coderland-network:
